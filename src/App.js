@@ -4,6 +4,8 @@ import Logo from './components/Logo/Logo';
 import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
+import SignIn from './components/SignIn/SignIn';
+import Register from './components/Register/Register';
 import 'tachyons';
 import Particles from 'react-particles-js';
 import { Component } from 'react';
@@ -33,6 +35,8 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
+      route: 'signIn',
+      isSignIn: false
     }
   }
 
@@ -68,17 +72,37 @@ class App extends Component {
     .catch(err => console.log(err));  
   }
 
+  onRouteChange = (route) => {
+    if( route === 'signout'){
+      this.setState({isSignIn: false})
+    }else if( route === 'home'){
+      this.setState({isSignIn: true})
+    }
+    this.setState({route: route});
+  }
+
   render(){
+    const { isSignIn, imageUrl, route, box } = this.state;
+
     return (
       <div className="App">
         <Particles className='particles'
           params={particlesOptions}
         />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
+        <Navigation isSignIn={isSignIn} onRouteChange={this.onRouteChange} />
+        {route === 'home' 
+        ? <div> 
+            <Logo />
+            <Rank />
+            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
+            <FaceRecognition box={box} imageUrl={imageUrl}/>
+          </div> 
+        : (
+          route === 'signIn' 
+          ? <SignIn onRouteChange={this.onRouteChange}/>
+          : <Register onRouteChange={this.onRouteChange} />
+          )
+        }
       </div>
     );
   }
